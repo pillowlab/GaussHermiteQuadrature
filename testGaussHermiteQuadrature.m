@@ -1,39 +1,37 @@
 % Test out using Gauss-Hermite Quadrature for evaluating numerical integral
 
 
-% ====  Make Hermite polynomial ==========
+% ====  Make Hermite polynomials of different orders ==========
 
-% Compute roots and weights of polynomial
+n = 5;  % set order for Gauss-Hermite polynomial (higher -> more accurate)
+[rr,ww] = compGaussHermiteQuadCoeffs(n); % get points and weights 
 
-n = 25;  % order for Gauss-Hermite polynomial (higher -> more accurate)
+n2 = 7;  % set order for Gauss-Hermite polynomial (higher -> more accurate)
+[rr2,ww2] = compGaussHermiteQuadCoeffs(n2); % get points and weights 
 
-[rr,ww] = compGaussHermiteQuadCoeffs(n);
-toc;
-
-tic;
-[rr0,ww0] = compGaussHermiteQuadCoeffs0(n);
-toc;
+n3 = 10;  % set order for Gauss-Hermite polynomial (higher -> more accurate)
+[rr3,ww3] = compGaussHermiteQuadCoeffs(n3); % get points and weights 
 
 %%  ===== Set function to integrate ======
 
-% parameters of ideal observer model
-obs_b = 1.1;  % offset
-obs_sig = 1; % internal noise stdev
-q0 = 1; % reward for left choice
-q1 = 2; % reward for right choice
+% Function we wish to integrate against a Gaussian density
+fptr = @(x)(1./(1 + exp(-0.7*x-0.33)))*.8 + .1*sin(1.1*x);
 
-% Function pointer for observer policy (i.e., function to integrate)
-fptr = @(x)(1./(1 + exp(q0 - (q0+q1)*normcdf((x-obs_b)/obs_sig))));
-
-% Gaussian weighting function to integrate over
-stim = 1.5;  % stimulus (point on the x axis where we wish to evaluate psychometric function)
-mu = stim;   % mean of Gaussian
-sigma = obs_sig; % stdev
+% Gaussian to integrate over
+mu = 5;  % mean of Gaussian
+sigma = 3; % stdev of Gaussian
 
 %% ===== Evaluate integral using Gauss-Hermite quadrature ========
 
 fvals= fptr(rr*sigma + mu);  % evaluate function at these points
-Fgausshermite = fvals'*ww; % evaluate integral using G-H quadrature
+Fintegral = fvals'*ww; % evaluate integral using G-H quadrature
+
+fvals2= fptr(rr2*sigma + mu);  % evaluate function at these points
+Fintegral2 = fvals2'*ww2; % evaluate integral using G-H quadrature
+
+fvals3= fptr(rr3*sigma + mu);  % evaluate function at these points
+Fintegral3 = fvals3'*ww3; % evaluate integral using G-H quadrature
+
 
 %% ====  Compute integral numerically using a grid ================
 
@@ -53,11 +51,23 @@ Fnumerical = sum(fx.*px)*dx;
 fprintf('---------------------------------------------\n');
 fprintf('Comparing Gauss-Hermite and Reimann integrals\n');
 fprintf('---------------------------------------------\n');
-fprintf('Gauss-Hermite quadrature (order=%d): %.4f\n', n,Fgausshermite);
-fprintf('Reimann integral:                    %.4f\n', Fnumerical);
-fprintf('error = %f\n', Fnumerical-Fgausshermite);
+fprintf('Reimann integral (%d points):      %.4f\n', nx, Fnumerical);
+fprintf('Gauss-Hermite quadrature (order=%d):  %.4f (err=%8.4f)\n', n,Fintegral,Fnumerical-Fintegral);
+fprintf('Gauss-Hermite quadrature (order=%d):  %.4f (err=%8.4f)\n', n2,Fintegral2,Fnumerical-Fintegral2);
+fprintf('Gauss-Hermite quadrature (order=%d): %.4f (err=%8.4f)\n', n3,Fintegral3,Fnumerical-Fintegral3);
 
-% Make plot
-plot(xgrid,fx,xgrid,px, xgrid,fx.*px);
+% Make plot showing function f(x) 
+subplot(211);
+plot(xgrid,px, xgrid,fx,rr3*sigma+mu, fvals3,'o');
 set(gca,'xlim',xrnge);
-legend('f(x)', 'Gaussian density', 'Gaussian * f(x)', 'location', 'northwest');
+legend('Gaussian density','f(x)','evaluation pts', 'location', 'northwest');
+title('function f(x)');  
+xlabel('x'); box off;
+
+% Make plot showing N(mu, sig) and f(x)*N(mu,sig)
+subplot(212); 
+plot(xgrid,px, xgrid,fx.*px, rr3*sigma+mu, fvals3.*normpdf(rr3*sigma+mu, mu, sigma),'o');
+set(gca,'xlim',xrnge);
+legend('Gaussian density', 'f(x) * Gaussian', 'evaluation pts', 'location', 'northwest');
+title('Gaussian and f(x) * Gaussian');
+xlabel('x'); box off;

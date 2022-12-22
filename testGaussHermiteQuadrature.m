@@ -6,7 +6,7 @@
 % Compute roots and weights of polynomial
 
 n = 25;  % order for Gauss-Hermite polynomial (higher -> more accurate)
-tic;
+
 [rr,ww] = compGaussHermiteQuadCoeffs(n);
 toc;
 

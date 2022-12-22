@@ -11,7 +11,7 @@ $$\int_{-\infty}^\infty f(x) p(x) dx \;\approx\; \sum_{i=1}^N w_i f(r_i),$$
 
 where $p(x) = \exp(-x^2)$, and the weights $w_i$ and evaluation points $r_i$ come from the theory of Hermite polynomials (which are orthogonal polynomials w.r.t. the weighting function $p(x)$).  
 
-In THIS repository, however, the weighting function used is a standard normal Gaussian density, $p(x) = 1/\sqrt(2\pi) \exp(x^2 / 2)$.  
+In _THIS_ repository, however, the weighting function used is a standard normal Gaussian density, $p(x) = 1/\sqrt{2\pi} \exp(x^2 / 2)$, which means that the sum will evaluate $f(x)$ times a normal density instead of $\exp(-x^2)$.
 
 ------- 
 

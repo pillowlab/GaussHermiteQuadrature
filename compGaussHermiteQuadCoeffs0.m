@@ -2,7 +2,11 @@ function [rr,ww] = compGaussHermiteQuadCoeffs0(n)
 % [rr,ww] = compGaussHermiteQuadCoeffs0(n)
 % 
 % Compute roots and weights needed for Gauss-Hermite Quadrature using a
-% standard normal weighting function.
+% standard normal weighting function. 
+%
+% This function uses a recursive formula to get coefficients; the function 
+% 'compGaussHermiteQuadCoeffs.m' instead computes them using closed-form
+% expressions (and should thus be slightly more efficient).   
 %
 % Approximates definite integral: 
 %
@@ -13,13 +17,16 @@ function [rr,ww] = compGaussHermiteQuadCoeffs0(n)
 %
 % where N(x) = 1/sqrt(2pi) exp(-x^2/2) and f(x) is any smooth function 
 %
-% Input
+%
+% INPUT
 % -----
 % n [1 x 1] - order of polynomial (integer >= 1). (higher -> more accurate)
 %
-% Outputs:
+% OUTPUT
+% ------
 % rr [n x 1] - roots (location to evaluate function)
 % ww [n x 1] - weights for Gauss-Hermite Quadrature
+%
 %
 % ---------------
 % Note: this differs slightly from standard Gauss-Hermite Quadrature, in
@@ -29,6 +36,7 @@ function [rr,ww] = compGaussHermiteQuadCoeffs0(n)
 %    F = \int f(x) N(x ; mu, sigma^2)
 %  use   
 %    F_approx = sum ww_i f(rr_i * sigma + mu)
+
 
 % test if n is an integer >= 1
 if abs(mod(n,1))>1e-10 || n<1

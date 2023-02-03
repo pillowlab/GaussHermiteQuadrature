@@ -6,23 +6,26 @@ function [rr,ww] = compGaussHermiteQuadCoeffs(n)
 %
 % Approximates definite integral: 
 %
-%      F  = \int_-infy^infty f(x) N(x) dx 
+%      F  = \int f(x) N(x) dx    (from -inf to inf)
 %  as
 %
 %      F_approx = \sum_{i=1}^n ww_i f(rr_i)
 %
 % where N(x) = 1/sqrt(2pi) exp(-x^2/2) and f(x) is any smooth function 
 %
-% Input
+% INPUT
 % -----
 % n [1 x 1] - order of polynomial (integer >= 1). (higher -> more accurate)
 %
-% Outputs:
+% OUTPUT
+% -----
 % rr [n x 1] - roots (location to evaluate function)
 % ww [n x 1] - weights for Gauss-Hermite Quadrature
 %
-% Note: this differs slightly from standard Gauss-Hermite Quadrature, in
-% which the weighting function N(x) is exp(-x^2)
+% ----------
+% Note: this code differs slightly from standard Gauss-Hermite Quadrature, 
+% in which the weighting function N(x) is exp(-x^2). Here we use a standard
+% normal density instead.
 %
 % To approximation to integrals w/ non-standard normal densities, i.e.,   
 %    F = \int f(x) N(x ; mu, sigma^2)
